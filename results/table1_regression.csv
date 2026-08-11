@@ -1,0 +1,7 @@
+feature,coefficient,se,beta_std,partial_r,t,p_value
+Persistence entropy (H0),0.449,0.013,0.599,0.738,34.489,<1e-15
+Contact frequency,0.233,0.015,0.31,0.431,15.041,<1e-15
+TAD enrichment,0.538,0.015,0.718,0.745,35.241,<1e-15
+Persistence entropy (H1),-0.013,0.021,-0.011,-0.02,-0.621,0.535
+Persistence entropy (H2),-0.002,0.023,-0.002,-0.003,-0.09,0.928
+R^2 (95% CI),0.722,,,,,"[0.693, 0.749]"

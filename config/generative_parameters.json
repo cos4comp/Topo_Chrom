@@ -1,0 +1,54 @@
+{
+  "_comment": "Generative parameters for the merged TCIT simulation pipeline. These values are calibrated to the statistics of GSE63525 (Rao et al. 2014, K562 chromosome 1) and ENCODE RNA-seq (ENCSR000AEN), consistent with the manuscript submitted to PLOS Computational Biology (PCOMPBIOL-D-26-01280): exponential distance decay (amplitude 2.0, length 8 bins), background contact 0.01, intra-TAD enrichment kappa = 3.0, multiplicative Gamma noise (shape 2.0, mean 1), planted TAD sizes of 6-15 bins, 15-bin feature windows, TAD-enrichment decay length of 3 bins, and regression ground truth standardized on H0/contact-frequency/TAD-enrichment with target R^2 0.72. All seeds are fixed for full reproducibility.",
+  "synthetic_hic": {
+    "resolution_bp": 40000,
+    "n_bins_total": 200,
+    "distance_decay_amplitude": 2.0,
+    "distance_decay_length": 8.0,
+    "background_contact": 0.01,
+    "intra_tad_enrichment": 3.0,
+    "noise_distribution": { "name": "gamma", "shape": 2.0, "scale": 0.5 },
+    "tad_size": { "name": "uniform", "min_bins": 6, "max_bins": 15 },
+    "seed": 42
+  },
+  "features": {
+    "window_size_bins": 15,
+    "persistence_max_dim": 2,
+    "distance_transform": "inverse_contact",
+    "pseudocount": 1e-5,
+    "chain_link_distance": 0.2,
+    "tad_decay_length": 3.0,
+    "seed": 42
+  },
+  "expression_ground_truth": {
+    "n_genes": 1000,
+    "beta0": 1.5,
+    "beta_H0": 0.45,
+    "beta_CF": 0.25,
+    "beta_TAD": 0.55,
+    "target_r2": 0.72,
+    "seed": 42
+  },
+  "maxent": {
+    "n_loci": 12,
+    "n_samples": 600,
+    "coupling_scale": 0.4,
+    "field_scale": 0.5,
+    "pseudolikelihood_l2": 1e-3,
+    "mcmc_steps": 200000,
+    "mcmc_burnin": 20000,
+    "seed": 11
+  },
+  "statistics": {
+    "n_bootstrap": 1000,
+    "seed": 42
+  },
+  "sensitivity": {
+    "_note": "noise_sigma is the residual standard deviation in absolute units of expression, applied when regenerating the response during the noise-sensitivity run.",
+    "window_size_range": [10, 25],
+    "contact_threshold_range": [0.05, 0.95],
+    "tad_threshold_range": [0.05, 0.30],
+    "n_genes_range": [500, 2000],
+    "noise_sigma_range": [0.1, 0.5]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "n_loci": 12,
+  "w_true": 0.4,
+  "w_inferred": 0.40573744382957905,
+  "r_true": 0.3,
+  "r_inferred": 0.32666337185088556,
+  "field_correlation": 0.8751172039219962,
+  "coupling_recovery_ratio": 1.0,
+  "mcmc_acceptance_rate": 0.42506363636363637,
+  "mean_state_max_abs_error": 0.018610000000000015,
+  "pairwise_corr_mean_abs_error": 0.031020467169188246
+}

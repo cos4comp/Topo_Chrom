@@ -1,0 +1,7 @@
+parameter,value_low,r2_low,value_high,r2_high
+baseline,-,0.722,-,0.722
+window_size_bins,10,0.73,25,0.723
+contact_threshold,0.05,0.722,0.95,0.721
+tad_threshold,0.05,0.731,0.3,0.735
+n_genes,500,0.746,2000,0.724
+noise_sigma,0.1,0.977,0.5,0.624
