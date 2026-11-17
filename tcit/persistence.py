@@ -47,30 +47,10 @@ def barcode_to_persistence_entropy(barcode: np.ndarray) -> float:
     return float(-np.sum(p * np.log2(p)))
 
 
-def _distance_transform(c, pseudocount, chain_link_distance):
-    """Inverse-contact distance transform with optional polymer chain link.
-
-    D_ij = 1 / (c_ij + epsilon), D_ii = 0. If ``chain_link_distance`` is given,
-    the distance between neighbouring bins is capped at that value so that the
-    one-dimensional polymer backbone enters the filtration early, which guides
-    Ripser and makes H1/H2 classes stable (manuscript convention).
-    """
-    n = c.shape[0]
-    distance = np.zeros((n, n))
-    off = ~np.eye(n, dtype=bool)
-    distance[off] = 1.0 / (c[off] + pseudocount)
-    if chain_link_distance is not None:
-        for i in range(n - 1):
-            distance[i, i + 1] = min(distance[i, i + 1], chain_link_distance)
-            distance[i + 1, i] = min(distance[i + 1, i], chain_link_distance)
-    return distance
-
-
 def persistence_entropy_contact(
     window_contacts: np.ndarray,
     max_dim: int = 2,
-    pseudocount: float = 1e-5,
-    chain_link_distance: float = 0.2,
+    pseudocount: float = 0.1,
 ) -> dict:
     """Persistence entropy per homology dimension for one contact window.
 
@@ -79,7 +59,6 @@ def persistence_entropy_contact(
     window_contacts : (m, m) square contact sub-matrix of a genomic window.
     max_dim : maximum homology dimension to compute (0, 1, 2).
     pseudocount : epsilon added before inverting the contact weights.
-    chain_link_distance : optional cap on neighbour-bin filtration distances.
 
     Returns
     -------
@@ -89,7 +68,9 @@ def persistence_entropy_contact(
     n = c.shape[0]
     if n < 2:
         return {k: 0.0 for k in range(max_dim + 1)}
-    distance = _distance_transform(c, pseudocount, chain_link_distance)
+    distance = np.zeros((n, n))
+    off = ~np.eye(n, dtype=bool)
+    distance[off] = 1.0 / (c[off] + pseudocount)
     result = ripser(distance, maxdim=max_dim, coeff=2, do_cocycles=False,
                     distance_matrix=True)
     entropies = {}
@@ -99,14 +80,15 @@ def persistence_entropy_contact(
 
 
 def persistence_barcodes(window_contacts: np.ndarray, max_dim: int = 2,
-                         pseudocount: float = 1e-5,
-                         chain_link_distance: float = 0.2):
+                         pseudocount: float = 0.1):
     """Return the raw persistence barcodes for one contact window.
 
     Useful for plotting barcode panels and diagnostics.
     """
     c = np.asarray(window_contacts, dtype=float)
     n = c.shape[0]
-    distance = _distance_transform(c, pseudocount, chain_link_distance)
+    distance = np.zeros((n, n))
+    off = ~np.eye(n, dtype=bool)
+    distance[off] = 1.0 / (c[off] + pseudocount)
     return ripser(distance, maxdim=max_dim, coeff=2, do_cocycles=False,
                   distance_matrix=True)["dgms"]
