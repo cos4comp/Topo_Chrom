@@ -1,33 +1,31 @@
 {
-  "_comment": "Generative parameters for the merged TCIT simulation pipeline. These values are calibrated to the statistics of GSE63525 (Rao et al. 2014, K562 chromosome 1) and ENCODE RNA-seq (ENCSR000AEN), consistent with the manuscript submitted to PLOS Computational Biology (PCOMPBIOL-D-26-01280): exponential distance decay (amplitude 2.0, length 8 bins), background contact 0.01, intra-TAD enrichment kappa = 3.0, multiplicative Gamma noise (shape 2.0, mean 1), planted TAD sizes of 6-15 bins, 15-bin feature windows, TAD-enrichment decay length of 3 bins, and regression ground truth standardized on H0/contact-frequency/TAD-enrichment with target R^2 0.72. All seeds are fixed for full reproducibility.",
+  "_comment": "Generative parameters for the simulation pipeline of the companion manuscript (Methods 4.1/4.5): synthetic contact matrices with exponential distance decay, planted TAD enrichment, and multiplicative Gamma noise, calibrated to the statistical signatures of the Rao et al. (GSE63525) K562 chromosome-1 contact map (distance-decay slope, intra-/inter-TAD enrichment, per-bin coverage), with planted TAD sizes drawn from the same dataset's empirical distribution. All seeds are fixed for full reproducibility.",
   "synthetic_hic": {
     "resolution_bp": 40000,
-    "n_bins_total": 200,
-    "distance_decay_amplitude": 2.0,
-    "distance_decay_length": 8.0,
-    "background_contact": 0.01,
-    "intra_tad_enrichment": 3.0,
-    "noise_distribution": { "name": "gamma", "shape": 2.0, "scale": 0.5 },
-    "tad_size": { "name": "uniform", "min_bins": 6, "max_bins": 15 },
+    "n_bins_total": 600,
+    "distance_decay_amplitude": 12.0,
+    "distance_decay_length": 6.0,
+    "background_contact": 0.5,
+    "intra_tad_enrichment": 1.8,
+    "noise_distribution": { "name": "gamma", "shape": 1.5, "scale": 0.3 },
+    "tad_size": { "name": "uniform", "min_bins": 3, "max_bins": 25 },
     "seed": 42
   },
   "features": {
     "window_size_bins": 15,
     "persistence_max_dim": 2,
     "distance_transform": "inverse_contact",
-    "pseudocount": 1e-5,
-    "chain_link_distance": 0.2,
-    "tad_decay_length": 3.0,
-    "seed": 42
+    "pseudocount": 0.1,
+    "seed": 3
   },
   "expression_ground_truth": {
     "n_genes": 1000,
-    "beta0": 1.5,
-    "beta_H0": 0.45,
-    "beta_CF": 0.25,
-    "beta_TAD": 0.55,
+    "beta0": 2.0,
+    "beta_H0": 2.4,
+    "beta_CF": 0.2,
+    "beta_TAD": 1.8,
     "target_r2": 0.72,
-    "seed": 42
+    "seed": 7
   },
   "maxent": {
     "n_loci": 12,
@@ -35,16 +33,16 @@
     "coupling_scale": 0.4,
     "field_scale": 0.5,
     "pseudolikelihood_l2": 1e-3,
-    "mcmc_steps": 200000,
-    "mcmc_burnin": 20000,
+    "mcmc_steps": 1000000,
+    "mcmc_burnin": 100000,
     "seed": 11
   },
   "statistics": {
     "n_bootstrap": 1000,
-    "seed": 42
+    "seed": 13
   },
   "sensitivity": {
-    "_note": "noise_sigma is the residual standard deviation in absolute units of expression, applied when regenerating the response during the noise-sensitivity run.",
+    "_note": "noise_sigma is the residual standard deviation in absolute units of the centered expression, applied when regenerating the response during the noise-sensitivity run.",
     "window_size_range": [10, 25],
     "contact_threshold_range": [0.05, 0.95],
     "tad_threshold_range": [0.05, 0.30],
