@@ -1,12 +1,12 @@
 {
   "n_loci": 12,
   "w_true": 0.4,
-  "w_inferred": 0.40573744382957905,
+  "w_inferred": 0.3984813362458427,
   "r_true": 0.3,
-  "r_inferred": 0.32666337185088556,
-  "field_correlation": 0.8751172039219962,
-  "coupling_recovery_ratio": 1.0,
-  "mcmc_acceptance_rate": 0.42506363636363637,
-  "mean_state_max_abs_error": 0.018610000000000015,
-  "pairwise_corr_mean_abs_error": 0.031020467169188246
+  "r_inferred": 0.29452374831345407,
+  "field_correlation": 0.9069369323404743,
+  "coupling_recovery_ratio": 0.9962033406146067,
+  "mcmc_acceptance_rate": 0.4236436363636364,
+  "mean_state_max_abs_error": 0.01840866666666674,
+  "pairwise_corr_mean_abs_error": 0.0225107441881503
 }
