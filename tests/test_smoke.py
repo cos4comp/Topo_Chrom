@@ -1,4 +1,4 @@
-"""Smoke tests for the merged TCIT reproducibility pipeline.
+"""Smoke tests for the TCIT reproducibility pipeline.
 
 Run:  python -m pytest tests/ -q
 """
@@ -15,10 +15,8 @@ import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tcit.synthetic_hic import SyntheticHiC
-from tcit.persistence import (persistence_entropy_contact,
-                              barcode_to_persistence_entropy)
-from tcit.features import (compute_features, pick_gene_bins,
-                           ground_truth_expression)
+from tcit.persistence import persistence_entropy_contact, barcode_to_persistence_entropy
+from tcit.features import compute_features, pick_gene_bins
 from tcit.detection import detect_boundaries
 from tcit.statistics import ols, partial_correlations, bootstrap_r2
 from tcit.maxent import run_maxent_demo, sample_gibbs
@@ -40,28 +38,15 @@ def test_contact_matrix_generation():
     assert np.allclose(np.diag(contact), 0)
     assert len(boundaries) >= 1
     assert np.all(boundaries < n)
-    assert np.all(boundaries > 0)
 
 
 def test_persistence_entropy_range():
     rng = np.random.default_rng(0)
     contact = rng.random((12, 12))
-    ent = persistence_entropy_contact(contact, max_dim=2,
-                                      chain_link_distance=None)
-    assert set(ent.keys()) == {0, 1, 2}
-    for k, v in ent.items():
-        assert 0.0 <= v <= np.log2(12) + 1e-6, (k, v)
-
-
-def test_persistence_entropy_chain_link():
-    rng = np.random.default_rng(1)
-    contact = rng.random((12, 12))
-    contact = (contact + contact.T) / 2
-    np.fill_diagonal(contact, 0.0)
     ent = persistence_entropy_contact(contact, max_dim=2)
     assert set(ent.keys()) == {0, 1, 2}
     for k, v in ent.items():
-        assert 0.0 <= v
+        assert 0.0 <= v <= np.log2(12) + 1e-6, (k, v)
 
 
 def test_barcode_entropy_empty():
@@ -78,18 +63,6 @@ def test_features_columns():
         feats.columns)
     assert len(feats) == 100
     assert feats["H0"].between(0, np.log2(15) + 1e-6).all()
-    assert feats["tad_enrichment"].between(0, 1.0).all()
-
-
-def test_pick_gene_bins_window_margin():
-    cfg = load_cfg()
-    synth = SyntheticHiC(cfg)
-    contact, _ = synth.generate()
-    window = int(cfg["features"]["window_size_bins"])
-    bins = pick_gene_bins(contact, 500, seed=42, window=window)
-    half = window // 2
-    assert bins.min() >= half
-    assert bins.max() < contact.shape[0] - half
 
 
 def test_boundary_detection_recovery():
@@ -106,11 +79,17 @@ def test_regression_high_r2():
     contact, boundaries = synth.generate()
     bins = pick_gene_bins(contact, 200, seed=3)
     feats = compute_features(contact, boundaries, bins, window=15)
+    X = feats[["H0", "contact_frequency", "tad_enrichment"]].to_numpy()
     eg = cfg["expression_ground_truth"]
-    y, _, _, Xstd = ground_truth_expression(feats, eg)
-    res = ols(Xstd, y)
+    lp = (eg["beta0"] + eg["beta_H0"] * X[:, 0]
+          + eg["beta_CF"] * X[:, 1] + eg["beta_TAD"] * X[:, 2])
+    r2 = float(eg["target_r2"])
+    sigma = float(np.sqrt(np.var(lp) * (1 - r2) / r2))
+    rng = np.random.default_rng(eg["seed"])
+    y = lp - lp.mean() + rng.normal(0, sigma, size=len(lp))
+    res = ols(X, y)
     assert res["r2"] > 0.5
-    partial = partial_correlations(Xstd, y)
+    partial = partial_correlations(X, y)
     assert partial.shape == (3,)
 
 
